@@ -1,26 +1,40 @@
-import { Component, Input, Output, EventEmitter } from '@angular/core';
+import { Component, Input, OnInit } from '@angular/core';
+import { ActivatedRoute, Params } from '@angular/router';
+import { Location } from '@angular/common';
+
 import { Hero } from '../hero';
 import { HeroService } from '../hero-service/hero.service'; 
+import 'rxjs/add/operator/switchMap';
 
 @Component({
     selector: 'hero-detail',
     templateUrl: './hero-detail.component.html',
+    styleUrls: ['./hero-detail.component.css'],
     providers: [HeroService]
 })
  
-export class HeroDetailComponent{
-    @Input() hero: Hero;
-    @Output() myEvent = new EventEmitter();
-    
-    constructor(private heroService: HeroService){}
+export class HeroDetailComponent implements OnInit {
+    @Input() hero:Hero
 
-    closeComponent(){
-    	this.hero = null;
-    	this.myEvent.emit(null);
+    constructor(
+        private heroService: HeroService,
+        private route: ActivatedRoute,
+        private location: Location
+        ){}
+
+    ngOnInit(){
+        this.route.params
+            .switchMap((params: Params) => this.heroService.getHero(Number(params['id'])))
+            .subscribe(hero => this.hero = hero);
     }
 
-    deleteSelectedHero(id: number){
+    deleteSelectedHero(id: number): void {
     	this.heroService.deleteHero(id);
-    	this.closeComponent();
+        this.hero = null;
+        this.goBack();
+    }
+
+    goBack(): void {
+        this.location.back();
     }
 }

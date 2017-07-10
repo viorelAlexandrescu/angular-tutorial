@@ -16,14 +16,23 @@ let HEROES: Hero[] = [
 
 @Injectable()
 export class HeroService{
+
+  getHeroes(): Promise<Hero[]> {
+    return Promise.resolve(HEROES);
+  }
+
+  getHero(id: number): Promise<Hero> {
+    return this.getHeroes()
+                .then(heroes => heroes.find(hero => hero.id === id));
+  }
   
 	getDummyHeroes(): Hero[] {
 		return HEROES;
 	}
 
   deleteHero(expendableHeroId: number){
-    let length = HEROES.length;
-    for(let i = 0; i < length; i++){
+    let len = HEROES.length;
+    for(let i = 0; i < len; i++){
       if(HEROES[i].id == expendableHeroId){
         HEROES.splice(i, 1);
         break;
