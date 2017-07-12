@@ -28,12 +28,6 @@ export class HeroDetailComponent implements OnInit {
             .subscribe(hero => this.hero = hero);
     }
 
-    deleteSelectedHero(id: number): void {
-    	this.heroService.deleteHero(id);
-        this.hero = null;
-        this.goBack();
-    }
-
     goBack(): void {
         this.location.back();
     }

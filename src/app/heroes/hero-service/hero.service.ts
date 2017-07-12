@@ -1,43 +1,49 @@
 import { Injectable } from '@angular/core';
+import { Http } from '@angular/http';
 import { Hero } from '../hero';
 
-let HEROES: Hero[] = [
-  { id: 11, name: 'Mr. Nice' },
-  { id: 12, name: 'Narco' },
-  { id: 13, name: 'Bombasto' },
-  { id: 14, name: 'Celeritas' },
-  { id: 15, name: 'Magneta' },
-  { id: 16, name: 'RubberMan' },
-  { id: 17, name: 'Dynama' },
-  { id: 18, name: 'Dr IQ' },
-  { id: 19, name: 'Magma' },
-  { id: 20, name: 'Tornado' }
-];
+import 'rxjs/add/operator/toPromise';
 
 @Injectable()
 export class HeroService{
+  apiUrl = 'http://localhost:3000/api/heroes';
+
+  constructor(private http: Http){}
 
   getHeroes(): Promise<Hero[]> {
-    return Promise.resolve(HEROES);
+    function parseHeroes(heroObject){
+      let incomingHeroList = JSON.parse(heroObject).heroes,
+          finalHeroList = [];
+      for(let i = 0; i < incomingHeroList.length; i++){
+        let newHero = new Hero(incomingHeroList[i]._id, incomingHeroList[i]._name);
+        finalHeroList.push(newHero);
+      }
+      return finalHeroList;
+    }
+
+    return this.http.get(this.apiUrl)
+                  .toPromise()
+                  .then(response => parseHeroes(response.json()))
+                  .catch(this.handleError);
   }
 
   getHero(id: number): Promise<Hero> {
-    return this.getHeroes()
-                .then(heroes => heroes.find(hero => hero.id === id));
+    function parseHero(heroObject){
+      let incomingHeroObject = JSON.parse(heroObject).hero,
+          finalHeroObject;
+      return new Hero(incomingHeroObject._id, incomingHeroObject._name);
+    }
+
+    let heroQueryUrl = this.apiUrl + '/getHero/' + id;
+    return this.http.get(heroQueryUrl)
+                    .toPromise()
+                    .then(response => parseHero(response.json()))
+                    .catch(this.handleError);
   }
   
-	getDummyHeroes(): Hero[] {
-		return HEROES;
-	}
-
-  deleteHero(expendableHeroId: number){
-    let len = HEROES.length;
-    for(let i = 0; i < len; i++){
-      if(HEROES[i].id == expendableHeroId){
-        HEROES.splice(i, 1);
-        break;
-      }
-    }
+	private handleError(error: any): Promise<any> {
+    console.error('An error occurred', error); // for demo purposes only
+    return Promise.reject(error.message || error);
   }
 
 }
