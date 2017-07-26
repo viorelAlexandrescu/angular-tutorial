@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component } from '@angular/core';
 
 @Component({
   selector: 'my-app',
@@ -6,12 +6,10 @@ import { Component, OnInit } from '@angular/core';
   styleUrls: ['./app.component.css']
 })
 
-export class AppComponent implements OnInit {
-	private title: string;
+export class AppComponent {
+	title: string;
 
 	constructor() {
 		this.title = 'Tour Of Heroes';
 	}
-
-	ngOnInit() {}
 }

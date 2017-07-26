@@ -50,12 +50,23 @@ function getHeroById(id) {
         let currentHero = HEROES[i];
         if (currentHero.id === id) {
             return currentHero;
-            break
         }
+    }
+}
+
+function updateHero(id, changes){
+    let len = HEROES.length;
+    for(let i = 0; i < len; i++){
+        let currentHero = HEROES[i];
+        if(currentHero.id === id){
+            currentHero._name = changes.newName;
+        }
+        break;
     }
 }
 
 module.exports = {
     getHeroes: getHeroes,
     getHeroById: getHeroById,
+    updateHero: updateHero
 }

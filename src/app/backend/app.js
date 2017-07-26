@@ -1,7 +1,10 @@
-const express = require('express');
-const app = express();
-const cors = require('cors');
-let db = require('./DB');
+const express   = require('express'),
+      app       = express(),
+      cors      = require('cors'),
+      bodyParser = require('body-parser'),
+      db        = require('./DB.js'),
+      apiConfig = require('./config.json');
+
 
 function getHeroesList(req, res) {
     let heroesListObject = {
@@ -22,10 +25,23 @@ function getHeroById(req, res) {
     res.end();
 }
 
-app.use(cors());
+function updateHeroById(req, res){    
+    let heroId = parseInt(req.params.heroId);
+    let changes = req.body;
+    db.updateHero(heroId, changes);
+    res.end();
+}
 
-app.get('/api/heroes', getHeroesList);
-app.get('/api/heroes/getHero/:heroId', getHeroById);
+app.use(cors());
+app.use(bodyParser.json());
+
+app.get(apiConfig.apiUrl, function(req, res){
+    res.send('Heroes Backend Api Root');
+    res.end();
+});
+app.get(apiConfig.apiUrl + apiConfig.heroQueryUrls[0], getHeroesList)
+app.get(apiConfig.apiUrl + apiConfig.heroQueryUrls[1], getHeroById)
+app.put(apiConfig.apiUrl + apiConfig.heroUpdateUrl, updateHeroById)
 
 app.listen(3000, function() {
     console.log('Backend listening on port 3000!');

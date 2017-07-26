@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { Http } from '@angular/http';
+import { Http, Headers } from '@angular/http';
 import { Hero } from '../hero';
 
 import 'rxjs/add/operator/toPromise';
@@ -7,6 +7,9 @@ import 'rxjs/add/operator/toPromise';
 @Injectable()
 export class HeroService{
   apiUrl = 'http://localhost:3000/api/heroes';
+  heroesQueryUrl = '/getHeroes';
+  heroQueryUrl = '/getHero';
+  heroUpdateUrl = '/updateHero';
 
   constructor(private http: Http){}
 
@@ -21,7 +24,7 @@ export class HeroService{
       return finalHeroList;
     }
 
-    return this.http.get(this.apiUrl)
+    return this.http.get(this.apiUrl + this.heroesQueryUrl)
                   .toPromise()
                   .then(response => parseHeroes(response.json()))
                   .catch(this.handleError);
@@ -34,11 +37,26 @@ export class HeroService{
       return new Hero(incomingHeroObject._id, incomingHeroObject._name);
     }
 
-    let heroQueryUrl = this.apiUrl + '/getHero/' + id;
-    return this.http.get(heroQueryUrl)
+    let queryUrl = this.apiUrl + this.heroQueryUrl + '/' + id;
+    return this.http.get(queryUrl)
                     .toPromise()
                     .then(response => parseHero(response.json()))
                     .catch(this.handleError);
+  }
+
+
+  updateHero(newHero: Hero): void {
+    let updateUrl = this.apiUrl + this.heroUpdateUrl + '/' + newHero.id;
+    let changes = {
+      newName: newHero.name
+    }
+
+    let headers = new Headers();
+    headers.append('Content-Type', 'application/json');
+    headers.append('Accept', 'application/json')
+    
+    this.http
+        .put(updateUrl, JSON.stringify(changes), { headers: headers });
   }
   
 	private handleError(error: any): Promise<any> {
