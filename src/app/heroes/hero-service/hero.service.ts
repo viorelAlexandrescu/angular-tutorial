@@ -56,7 +56,9 @@ export class HeroService{
     headers.append('Accept', 'application/json')
     
     this.http
-        .put(updateUrl, JSON.stringify(changes), { headers: headers });
+        .put(updateUrl, JSON.stringify(changes), { headers: headers })
+        .toPromise()
+        .catch(this.handleError);
   }
   
 	private handleError(error: any): Promise<any> {

@@ -1,0 +1,3 @@
+[submodule "src/app/angular-tutorial-backend"]
+	path = src/app/angular-tutorial-backend
+	url = https://github.com/viorelAlexandrescu/angular-tutorial-backend
