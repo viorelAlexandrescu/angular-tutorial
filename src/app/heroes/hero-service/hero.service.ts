@@ -32,9 +32,9 @@ export class HeroService{
 
   getHero(id: number): Promise<Hero> {
     function parseHero(heroObject){
-      let incomingHeroObject = JSON.parse(heroObject).hero,
-          finalHeroObject;
-      return new Hero(incomingHeroObject._id, incomingHeroObject._name);
+      let incomingHeroObject = JSON.parse(heroObject).hero;
+      return new Hero(incomingHeroObject._id, 
+                      incomingHeroObject._name);
     }
 
     let queryUrl = this.apiUrl + this.heroQueryUrl + '/' + id;
